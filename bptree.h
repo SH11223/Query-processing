@@ -208,7 +208,7 @@ public:
         }
 
     }
-    void Print(fstream& of){
+    void Print(ofstream& of){
 		int s = 0;
 		int i =0;
         BPNode* tmp = this;

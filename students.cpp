@@ -38,21 +38,37 @@ Students to_student(ifstream& fin) {
 	return student;
 }
 
-int main() {
+int main(int argc, char** argv) {
 
 	int N;
 	int k =0 ;
 	string tmp;
 	Students* students;
 	_DB testDB;
-
+/*
+	if(argv[0].compare("Search-Exact")==0){
+		if(argc!= 4)
+			cout << "error" << endl;
+	}
+	else if(argv[0].compare("Search-Range")==0){
+		if(argc!= 5)
+			cout << "error" << endl;
+	}
+	else if(argv[0].compare("Join")==0){
+		if(argc!= 3)
+			cout << "error" << endl;
+	}
+	else
+		cout << "error"
+	*/
 	BPNode* root = new BPNode();
 
 	ifstream fin;
 	fin.open("sampleData.csv");
 
 	fstream sco;
-
+	ofstream fout2;
+	fout2.open("Students_score.idx");
 	getline(fin, tmp);
 	N = stoi(tmp);
 
@@ -62,7 +78,7 @@ int main() {
 		students[i] = to_student(fin);
 		testDB.Insert(students[i]);
 	}
-
+	cout << sizeof(BPNode);
 	testDB.Print();
 
 	cout << "Enter the leaf number" << endl;
@@ -72,9 +88,10 @@ int main() {
 		root->Insert(students[i],testDB.BlockNum(students[i].studentID));
 		
 	}
-	root->Print(sco);
+	root->Print(fout2);
 	root->Print(k+1);
 	fin.close();
+	fout2.close();
 	testDB.Close();
 	delete [] students;
 	return 0;
