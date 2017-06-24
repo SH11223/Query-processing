@@ -19,6 +19,25 @@ Block::Block()
 	Bit_Num = 0;
 }
 
+Student to_student(ifstream& fin) {
+    int i = 0, pos = 0;
+    string tmp;
+    Student student;
+    getline(fin, tmp);
+    pos = tmp.find(",", i);
+    strcpy(student.name,tmp.substr(i, pos -i).c_str());
+//	strncpy_s(student.name, tmp.substr(i, pos - i).c_str(), _TRUNCATE);
+    i = pos + 1;
+    pos = tmp.find(",", i);
+//	student.studentID = stoi(tmp.substr(i, pos - i));
+    i = pos + 1;
+    pos = tmp.find(",", i);
+//	student.score = stof(tmp.substr(i, pos - i));
+    i = pos + 1;
+//	student.advisorID = stoi(tmp.substr(i));
+
+    return student;
+}
 Students to_student(ifstream& fin) {
 	int i = 0, pos = 0;
 	string tmp;
@@ -77,19 +96,20 @@ int main(int argc, char** argv) {
 	for (int i = 0; i < N; i++) {
 		students[i] = to_student(fin);
 		testDB.Insert(students[i]);
+		root->Insert(students[i],testDB.BlockNum(students[i].studentID));
 	}
 	cout << sizeof(BPNode);
 	testDB.Print();
 
 	cout << "Enter the leaf number" << endl;
 	cin >> k;
-
+/*
 	for (int i = 0; i < N; i++) {
 		root->Insert(students[i],testDB.BlockNum(students[i].studentID));
 		
-	}
+	}*/
 	root->Print(fout2);
-	root->Print(k+1);
+	root->Print(k);
 	fin.close();
 	fout2.close();
 	testDB.Close();

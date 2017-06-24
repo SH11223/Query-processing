@@ -7,6 +7,7 @@
 
 #define BLOCKSIZE  4096                                           
 #define IN_BLOCK_MAX  (BLOCKSIZE - sizeof(Students)) / sizeof(Students)
+#define IN_BLOCK_MAX_PRO  (BLOCKSIZE - sizeof(Students)) / sizeof(Students)
 #pragma pack(1)
 using namespace std;
 
@@ -16,6 +17,13 @@ public:
 	unsigned studentID;
 	float score;
 	unsigned advisorID;
+};
+
+class Professors{
+public:
+	char name[20];
+	unsigned profID;
+	int Salary;
 };
 
 class Block {
