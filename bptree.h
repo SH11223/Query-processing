@@ -13,7 +13,7 @@ private:
 	int BNum[IN_NODE_MAX];
     bool leaf;
     int in;
-	char blank[BLOCKSIZE - IN_NODE_MAX*(sizeof(Students) + sizeof(int) + sizeof(int*))];
+	char blank[BLOCKSIZE -sizeof(int*)*3 - sizeof(int) - sizeof(bool)- IN_NODE_MAX*(sizeof(Students) + sizeof(int) + sizeof(int*))];
 public:
     BPNode(){
         nextleaf = NULL;
@@ -22,7 +22,7 @@ public:
 			childnode[i] = NULL;
 		}
         leaf = true;
-        in = 0;
+        in = 0;//4057
     }
     bool isFull(){
         return (IN_NODE_MAX == in);
