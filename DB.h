@@ -9,10 +9,11 @@ using namespace std;
 
 class _DB {
 private:
+	
+public:
 	fstream DBFile;
 	Block DB_Buffer;
 	Block_prof DB_Buffer_prof;
-public:
 	friend class Dynamic_Hash;
 	Dynamic_Hash* H;
 	void Open();
