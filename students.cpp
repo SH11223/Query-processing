@@ -77,6 +77,38 @@ Professors to_prof(ifstream& fin){
 	return prof;
 }
 
+void JoinPS(ofstream& fout) {
+	int k = 0;
+	_DB studDB, profDB;
+	studDB.Open();
+	profDB.Open_prof();
+	for (int i = 0; i < 1024; i++) {
+		if (i > 0 && studDB.H->Hash_Table.Table_Block_Offset[i] == studDB.H->Hash_Table.Table_Block_Offset[i - 1])
+			continue;
+		if (studDB.H->Hash_Table.Table_Block_Offset[i] == -1)
+			break;
+		studDB.DBFile.seekg(studDB.H->Hash_Table.Table_Block_Offset[i], ios::beg);
+		studDB.DBFile.read((char*)&studDB.DB_Buffer, sizeof(Block));
+		for (int j = 0; j < 1024; j++) {
+			if ((j > 0 && profDB.H->Hash_Table.Table_Block_Offset[j] == profDB.H->Hash_Table.Table_Block_Offset[j - 1]) || profDB.H->Hash_Table.Table_Block_Offset[j] == -1)
+				continue;
+			profDB.DBFile.seekg(profDB.H->Hash_Table.Table_Block_Offset[j], ios::beg);
+			profDB.DBFile.read((char*)&profDB.DB_Buffer_prof, sizeof(Block_prof));
+			for (int a = 0; a < IN_BLOCK_MAX; a++) {
+				for (int b = 0; b < IN_BLOCK_MAX_PRO; b++) {
+					if ((studDB.DB_Buffer.Record[a].advisorID == profDB.DB_Buffer_prof.Record[b].profID) && studDB.DB_Buffer.Record[a].advisorID != 0) {
+						fout << studDB.DB_Buffer.Record[a].name << ", " << studDB.DB_Buffer.Record[a].studentID << ", " << studDB.DB_Buffer.Record[a].score << ", " << studDB.DB_Buffer.Record[a].advisorID << endl;
+						k++;
+					}
+				}
+			}
+		}
+	}
+	fout << "Join Result : " << k << endl;
+	studDB.Close();
+	profDB.Close();
+}
+
 void ReadQuery() {
 	int K;
 	Students student;
@@ -92,6 +124,7 @@ void ReadQuery() {
 
 	getline(fin, tmp);
 	K = stoi(tmp);
+	cout << K << endl;
 
 	for (int j = 0; j < K; j++) {
 		int i = 0, pos = 0;
@@ -106,10 +139,10 @@ void ReadQuery() {
 				i = pos + 1;
 				studDB.Open();
 				student = studDB.ID_Search(stoi(tmp.substr(i)));
-				
+
 				if (student.studentID == 0)
 					fout << "Not Found studentID" << endl;
-			
+
 				else {
 					fout << 1 << endl;
 					fout << student.name << ", " << student.studentID << ", " << student.score << ", " << student.advisorID << endl;
@@ -132,11 +165,12 @@ void ReadQuery() {
 				profDB.Close();
 			}
 		}
-		else if (tmp.substr(i, pos - i).c_str() == "Search-Range") {
+		else if (!strcmp(tmp.substr(i, pos - i).c_str(), "Search-Range")) {
 
 		}
-		else if (tmp.substr(i, pos - i).c_str() == "Join") {
-
+		else if (!strcmp(tmp.substr(i, pos - i).c_str(), "Join")) {
+			fout << "Join Start" << endl;
+			JoinPS(fout);
 		}
 		
 	}
@@ -155,7 +189,6 @@ void Range_Prof(){
 
 void Range_Stud(){
 }
-
 
 int main() {
 	/*
@@ -293,6 +326,8 @@ int main() {
 	delete[] professors;
 
 	fin.close();
+	studDB.Close();
+	profDB.Close();
 
 	ReadQuery();
 
