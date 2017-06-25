@@ -67,67 +67,77 @@ void Range_Stud(char*, char*, char*){
 }
 int main(int argc, char** argv) {
 
-	int N1, N2;
+	int N, N2;
 	int k =0 ;
 	string tmp;
 	Professors* professors;
 	Students* students;
 	_DB testDB;
-
-	if(strcmp(argv[0],"Search-Exact")==0){
-		if(argc!= 4)
-			cout << "error" << endl;
-		else if(strcmp(argv[1],"Professors")==0)
-			Exact_Prof(argv[2], argv[3]);
-		else if(strcmp(argv[1],"Students")==0)
-			Exact_Stud(argv[2], argv[3]);
-		else
-			cout<<"error" << endl;
-	}
-	else if(strcmp(argv[0],"Search-Range")==0){
+	/*
+	if(strcmp(argv[1],"Search-Exact")==0)
+	{
 		if(argc!= 5)
 			cout << "error" << endl;
-		else if(strcmp(argv[1],"Professors")==0)
-			Range_Prof(argv[2], argv[3],argv[4]);
-		else if(strcmp(argv[1],"Students")==0)
-			Range_Stud(argv[2], argv[3],argv[4]);
+		else if(strcmp(argv[2],"Professors")==0)
+			Exact_Prof(argv[3], argv[4]);
+		else if(strcmp(argv[2],"Students")==0)
+			Exact_Stud(argv[3], argv[4]);
 		else
 			cout<<"error" << endl;
 	}
-	else if(strcmp(argv[0],"Join")==0){
-		if(argc!= 3)
+	else if(strcmp(argv[1],"Search-Range")==0){
+		if(argc!= 6)
+			cout << "error" << endl;
+		else if(strcmp(argv[2],"Professors")==0)
+			Range_Prof(argv[3], argv[4],argv[5]);
+		else if(strcmp(argv[2],"Students")==0)
+			Range_Stud(argv[3], argv[4],argv[5]);
+		else
+			cout<<"error" << endl;
+	}
+	else if(strcmp(argv[1],"Join")==0){
+		if(argc!= 4)
 			cout << "error" << endl;
 	}
 	else
 		cout << "error" << endl;
+	*/
 	
 	BPNode* root = new BPNode();
 
 	ifstream fin1, fin2;
-	fin1.open("student_data.csv");
+	fin1.open("sampleData.csv");
 	fin2.open("prof_data.csv");
 
+	
 	fstream sco;
 	ofstream fout1, fout2;
 	fout1.open("Students_score.idx");
 	fout2.open("Professor_Salary.idx");
 	getline(fin1, tmp);
-	N1 = stoi(tmp);
-
+	N = stoi(tmp);
+	getline(fin2, tmp);
+	N2 = stoi(tmp);
+	cout << N2 ;
+	
 	testDB.Open();
-	students = new Students[N1];
-	for (int i = 0; i < N1; i++) {
+	
+	students = new Students[N];
+	
+	for (int i = 0; i < N; i++) {
 		students[i] = to_student(fin1);
 		testDB.Insert(students[i]);
 		root->Insert(students[i],testDB.BlockNum(students[i].studentID));
 	}
+	
 	cout << sizeof(BPNode);
 	testDB.Print();
 
+	
 	professors = new Professors[N2];
-	for (int i = 0; i < N2; i++) {
-		professors[i] = to_prof(fin2);
-	}
+	//for (int i = 0; i < N2; i++) {
+//		professors[i] = to_prof(fin2);
+//	}
 	cout << "Enter the leaf number" << endl;
 	cin >> k;
 /*
