@@ -11,14 +11,18 @@ class _DB {
 private:
 	fstream DBFile;
 	Block DB_Buffer;
+	Block_prof DB_Buffer_prof;
 public:
 	friend class Dynamic_Hash;
 	Dynamic_Hash* H;
 	void Open();
+	void Open_prof();
 	void Close();
 	bool Insert(Students student);
+	bool Insert_prof(Professors professor);
 	void Print();
-	// void ID_Search(unsigned int ID);
+	Students ID_Search(unsigned int ID);
+	Professors ID_Search_prof(unsigned int ID);
 	int BlockNum(unsigned int ID);
 };
 
