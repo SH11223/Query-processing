@@ -4,7 +4,7 @@
 #include <string>
 #include <cstring>
 #include <stdlib.h>
-// #include "bptree.h"
+#include "bptree.h"
 #include "students.h"
 #include "dynamic_hash.h"
 #include "DB.h"
@@ -109,7 +109,7 @@ void JoinPS(ofstream& fout) {
 	profDB.Close();
 }
 
-void ReadQuery() {
+void ReadQuery(BPNode* stu, BPNode_P* prof) {
 	int K;
 	Students student;
 	Professors professor;
@@ -166,7 +166,28 @@ void ReadQuery() {
 			}
 		}
 		else if (!strcmp(tmp.substr(i, pos - i).c_str(), "Search-Range")) {
-
+			Students temp;
+			i = pos + 1;
+			pos = tmp.find(",", i);
+			if (!strcmp(tmp.substr(i, pos - i).c_str(), "Students")) {
+				i = pos + 1;
+				pos = tmp.find(",", i);
+				i = pos + 1;
+				pos = tmp.find(",", i);
+				float j = atof(tmp.substr(i, pos-i).c_str());
+				i = pos +1;
+				cout << K << endl;
+				stu->Search(j,atof(tmp.substr(i).c_str()),fout);
+			}
+			else if (!strcmp(tmp.substr(i, pos - i).c_str(), "Professors")) {
+				i = pos + 1;
+				pos = tmp.find(",", i);
+				i = pos + 1;
+				pos = tmp.find(",", i);
+				int j = stoi(tmp.substr(i,pos-i));
+				i = pos + 1;
+				fout << prof->Search(j,stoi(tmp.substr(i)));
+			}
 		}
 		else if (!strcmp(tmp.substr(i, pos - i).c_str(), "Join")) {
 			fout << "Join Start" << endl;
@@ -178,17 +199,6 @@ void ReadQuery() {
 	fout.close();
 }
 
-void Exact_Prof(){
-}
-
-void Exact_Stud(){
-}
-
-void Range_Prof(){
-}
-
-void Range_Stud(){
-}
 
 int main() {
 	/*
@@ -288,25 +298,32 @@ int main() {
 	Professors* professors;
 	_DB studDB, profDB;
 
-	// BPNode* root = new BPNode();
-
+	BPNode* root = new BPNode();
+	BPNode_P *root_P = new BPNode_P();
+	
 	ifstream fin;
 	fstream sco;
-
+	ofstream of;
 	fin.open("student_data.csv");
-
+	of.open("Students_score.idx");
 	getline(fin, tmp);
 	N = stoi(tmp);
 	N = 100000;
 
 	studDB.Open();
 	students = new Students[N];
+	
 	for (int i = 0; i < N; i++) {
+		
 		students[i] = to_student(fin);
-		studDB.Insert(students[i]);
+		
+		//studDB.Insert(students[i]);
+		
+		root->Insert(students[i],i);
+		
 	}
-
-	cout << "check" << endl;
+	
+	root->Print(of);
 
 	delete[] students;
 
@@ -316,21 +333,24 @@ int main() {
 
 	getline(fin, tmp);
 	N = stoi(tmp);
-
-	profDB.Open_prof();
+	N = 8000;
+	//profDB.Open_prof();
+	
 	professors = new Professors[N];
 	for (int i = 0; i < N; i++) {
 		professors[i] = to_prof(fin);
-		profDB.Insert_prof(professors[i]);
+		//profDB.Insert_prof(professors[i]);
+		root_P->Insert(professors[i],0);
 	}
 	delete[] professors;
-
+	root->Print(of);
+	root_P->Print(of);
 	fin.close();
-	studDB.Close();
-	profDB.Close();
-
-	ReadQuery();
-
+	//studDB.Close();
+	//profDB.Close();
+	of.close();
+	ReadQuery(root, root_P);
+	
 	return 0;
 
 
