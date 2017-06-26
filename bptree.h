@@ -155,8 +155,8 @@ public:
 			parenttmp->Sort();
 			if(parenttmp->isFull())
 				parenttmp->Split();
-            //insert parent¢¯¢® scores[in/2]
-            //childnode A¢´¢¬¢ç
+            //insert parentÂ¢Â¯Â¢Â® scores[in/2]
+            //childnode AÂ¢Â´Â¢Â¬Â¢Ã§
 
         }
 
@@ -243,7 +243,7 @@ public:
 			temp = temp->childnode[0];
 		}
 		int i = 0;
-		while(true){
+		while(temp->nextleaf!=NULL){
 			if(temp->students[temp->in -1].score < a)
 				temp = temp->nextleaf;
 			else 
@@ -423,8 +423,8 @@ public:
 			parenttmp->Sort();
 			if(parenttmp->isFull())
 				parenttmp->Split();
-            //insert parent¢¯¢® scores[in/2]
-            //childnode A¢´¢¬¢ç
+            //insert parentÂ¢Â¯Â¢Â® scores[in/2]
+            //childnode AÂ¢Â´Â¢Â¬Â¢Ã§
 
         }
 
@@ -511,7 +511,7 @@ public:
 			temp = temp->childnode[0];
 		}
 		int i = 0;
-		while(true){
+		while(temp->nextleaf!=NULL){
 			if(temp->professors[temp->in -1].Salary < a)
 				temp = temp->nextleaf;
 			else 
