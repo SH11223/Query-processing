@@ -74,7 +74,7 @@ public:
             BPNode* new1 = new BPNode();
             BPNode* new2 = new BPNode();
 			s =0;
-            for(k = this->in/2; k<in; k++){
+            for(k = this->in/2+1; k<in; k++){
 				
                 new2->students[s] = Copy(this->students[k]);
 				
@@ -82,7 +82,7 @@ public:
                 new2->in++;
 				s++;
             }
-            for(j = 0; j< this->in/2 ; j++){
+            for(j = 0; j< this->in/2+1 ; j++){
                 new1->students[j] = Copy(this->students[j]);
 				new1->BNum[j] = this->BNum[j];
                 new1->in++;
@@ -98,7 +98,7 @@ public:
             new1->parentnode = this;
             new2->parentnode = this;
         }
-		else if (this->parentnode == NULL){
+		else if (this->parentnode == NULL && (!this->leaf)){
             BPNode* new1 = new BPNode();
             BPNode* new2 = new BPNode();
 			s =0;
@@ -106,11 +106,12 @@ public:
 				
                 new2->students[s] = Copy(this->students[k]);
 				
-				new2->childnode[s+1] = this->childnode[k];
+				new2->childnode[s] = this->childnode[k-1];
 				new2->BNum[s] = this->BNum[k];
                 new2->in++;
 				s++;
             }
+			new2->childnode[s] = this->childnode[this->in];
             for(j = 0; j< this->in/2+1 ; j++){
                 new1->students[j] = Copy(this->students[j]);
 				new1->BNum[j] = this->BNum[j];
@@ -155,8 +156,8 @@ public:
 			parenttmp->Sort();
 			if(parenttmp->isFull())
 				parenttmp->Split();
-            //insert parent¢¯¢® scores[in/2]
-            //childnode A¢´¢¬¢ç
+            //insert parent¿¡ scores[in/2]
+            //childnode A¤¸®
 
         }
 
@@ -190,10 +191,9 @@ public:
 						i++;
 						break;
 					}
-					else if(stu.score == tmp->students[i].score && stu.score < tmp->students[i+1].score){
-						i++;
+					else if(stu.score == tmp->students[i].score)
 						break;
-					}
+					
                     else
                         continue;
                 }
@@ -236,37 +236,52 @@ public:
 	}
 	
 	void Search(float a, float b, ofstream& of){
+		of << "-----------------------------------------------------------------------" << endl;
+			
 		BPNode *temp;
 		temp = this;
 		int count=0;
-		while(!temp->leaf){
+		while(!temp->isLeaf()){
 			temp = temp->childnode[0];
 		}
 		int i = 0;
-		while(temp->nextleaf!=NULL){
-			if(temp->students[temp->in -1].score < a)
+		while(temp->nextleaf!= NULL){
+			if(count = 1)
+				break;
+			if(temp->nextleaf->students[0].score < a){
 				temp = temp->nextleaf;
+			}
 			else 
 			{
 				for(i =0; i<temp->in; i++){
-					if(temp->students[i].score == a | temp->students[i].score > a)
+					if(temp->students[i].score == a | temp->students[i].score > a){
+						
 						break;
+					}
 				}
 				break;
 			}
 		}
-		while( temp->students[i].score ==b | temp->students[i].score < b ){
+		while( temp->students[i].score == b | temp->students[i].score < b ){
+			
 			if(temp == NULL)
 				break;
-			of << temp->students[i].name << ", " << temp->students[i].studentID << ", " << temp->students[i].score << ", " <<  temp->students[i].advisorID << endl;
+			if(temp->students[i].name[0] != '\0'){
+				of << temp->students[i].name << ", " << temp->students[i].studentID << ", " << temp->students[i].score << ", " <<  temp->students[i].advisorID << endl;
+			
+				count++;
+			}
 			i++;
-			count++;
-			if(i == temp->in)
+			if(i == temp->in){
+				i = 0;
 				if(temp->nextleaf == NULL)
 					break;
 				else
+					
 					temp = temp->nextleaf;
+			}
 		}
+		of<<"Students Search-Range : " << count << endl;
 	}
 };
 
@@ -342,7 +357,7 @@ public:
             BPNode_P* new1 = new BPNode_P();
             BPNode_P* new2 = new BPNode_P();
 			s =0;
-            for(k = (this->in+1)/2; k<in; k++){
+            for(k = this->in/2+1; k<in; k++){
 				
                 new2->professors[s] = Copy(this->professors[k]);
 				
@@ -350,7 +365,7 @@ public:
                 new2->in++;
 				s++;
             }
-            for(j = 0; j< this->in/2 ; j++){
+            for(j = 0; j< this->in/2+1 ; j++){
                 new1->professors[j] = Copy(this->professors[j]);
 				new1->BNum[j] = this->BNum[j];
                 new1->in++;
@@ -423,8 +438,8 @@ public:
 			parenttmp->Sort();
 			if(parenttmp->isFull())
 				parenttmp->Split();
-            //insert parent¢¯¢® scores[in/2]
-            //childnode A¢´¢¬¢ç
+            //insert parent¿¡ scores[in/2]
+            //childnode A¤¸®
 
         }
 
@@ -452,8 +467,7 @@ public:
 						i++;
 						break;
 					}
-					else if(prof.Salary == tmp->professors[i].Salary && prof.Salary < tmp->professors[i+1].Salary){
-						i++;
+					else if(prof.Salary == tmp->professors[i].Salary){
 						break;
 					}
                     else
@@ -471,25 +485,18 @@ public:
         }
     }
     void Print(fstream& of){
-		int s = 0;
-		int i =0;
+  		int s = 0;
+  		int i =0;
+        
         BPNode_P* tmp = this;
         while(!tmp->isLeaf()){
             tmp = tmp->childnode[0];
         }
-        while(tmp!= NULL){
-			of << "LEAF NODE No." << s+1 << endl;
-            for(i = 0; i<tmp->in; i++){
-				of << tmp->professors[i].Salary << ", " << tmp->professors[i].profID << "," << tmp->BNum[i] <<endl;
-            }
-            tmp = tmp->nextleaf;
-			of << "-----------------------------------------------------------------------" << endl;
-			s++;
-        }
-		of.open("Professor_Saraly.idx", ios::in | ios::out | ios::binary);
+		of.open("Professors_Saraly.idx", ios::in | ios::out | ios::binary);
 		if(!of)
 			of.open("Professors_Saraly.idx", ios::in | ios::out | ios::binary | ios::trunc);
 		while (tmp != NULL) {
+			
 			of.write((char*)tmp, sizeof(BPNode_P));
 			tmp = tmp->nextleaf;
 		}
@@ -504,6 +511,8 @@ public:
 	}
 	
 	void Search(int a, int b, ofstream& of){
+		of << "-----------------------------------------------------------------------" << endl;
+			
 		BPNode_P *temp;
 		temp = this;
 		int count=0;
@@ -511,8 +520,8 @@ public:
 			temp = temp->childnode[0];
 		}
 		int i = 0;
-		while(temp->nextleaf!=NULL){
-			if(temp->professors[temp->in -1].Salary < a)
+		while(temp->nextleaf != NULL){
+			if(temp->nextleaf->professors[0].Salary < a)
 				temp = temp->nextleaf;
 			else 
 			{
@@ -526,15 +535,20 @@ public:
 		while( temp->professors[i].Salary ==b | temp->professors[i].Salary < b ){
 			if(temp == NULL)
 				break;
-			of << temp->professors[i].name << ", " << temp->professors[i].profID << ", " << temp->professors[i].Salary << endl;
+			if(temp->professors[i].name[0] != '\0' && temp->professors[i].profID != 0 && temp ->professors[i].Salary != 0){
+				of << temp->professors[i].name << ", " << temp->professors[i].profID << ", " << temp->professors[i].Salary << endl;
+			
+				count++;
+			}
 			i++;
-			count++;
 			if(i == temp->in)
 				if(temp->nextleaf == NULL)
 					break;
 				else
 					temp = temp->nextleaf;
 		}
+		
+		of<<"Professors Search-Range : " << count << endl;
 	}
 };
 
