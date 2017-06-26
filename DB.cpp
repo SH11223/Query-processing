@@ -18,17 +18,17 @@ std::string to_string(T value) {
 	return os.str();
 }
 
-void _DB::Open()
+void _DB::Open(string filename)
 {
-	DBFile.open("Student.DB", ios::in | ios::out | ios::binary);
+	DBFile.open(filename + ".DB", ios::in | ios::out | ios::binary);
 	if (!DBFile)
 	{
 		DBFile.clear();
-		DBFile.open("Student.DB", ios::in | ios::out | ios::binary | ios::trunc);
+		DBFile.open(filename + ".DB", ios::in | ios::out | ios::binary | ios::trunc);
 		DBFile.seekp(0, ios::beg);
 		DBFile.write((char*)&DB_Buffer, sizeof(Block));
 	}
-	H = new Dynamic_Hash("Student.Hash");
+	H = new Dynamic_Hash((filename + ".Hash").c_str());
 }
 
 void _DB::Open_prof()

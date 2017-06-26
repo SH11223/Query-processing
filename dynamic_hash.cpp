@@ -10,12 +10,12 @@ using namespace std;
 
 HashTable::HashTable()
 {
-	for (int i = 0; i < (BLOCKSIZE / sizeof(long)); i++)                   // 1024
+	for (int i = 0; i < 1024; i++)                   // 1024
 		Table_Block_Offset[i] = -1;
 }
 
 // Hash_File내 [0..4]까지는 Table_Bit_Num이 쓰여지고, [4..4100]은 Hash_Table이 쓰여진다.
-Dynamic_Hash::Dynamic_Hash(char* Hash_File_Name)
+Dynamic_Hash::Dynamic_Hash(const char* Hash_File_Name)
 {
 	Hash_File.open(Hash_File_Name, ios::binary | ios::in | ios::out);
 	if (!Hash_File)                                                   // Hash_File이 존재하지 않을 경우.
@@ -116,6 +116,7 @@ void Dynamic_Hash::Block_Full(string s_ID, int Block_Bit_Num, fstream& DB_File)
 		Block* Buffer = new Block;                                 // Temp Buffer;
 		DB_File.seekp(0, ios::end);
 		long New_Block_Offset = DB_File.tellp();                   // 새로운 Block의 OFfset.
+		
 		Block* New_Block = new Block;                              // 새로운 Block.
 		Block* Old_Block = new Block;                              // 기존의 Block.
 

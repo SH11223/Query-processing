@@ -25,7 +25,7 @@ private:
 public:
 	unsigned int _Hash(string str);
 	HashTable Hash_Table;
-	Dynamic_Hash(char* Hash_File_name);
+	Dynamic_Hash(const char* Hash_File_name);
 	~Dynamic_Hash();
 	long Get_Hash_Offset(string s_ID);		                         // ID 값을 가지고 와서 해당 Block Offset을 Return.
 	void Block_Full(string s_ID, int Block_Bit_Num, fstream& DB_File);
