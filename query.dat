@@ -1,4 +1,4 @@
 3
-Search-Exact,Students,studentID,71706
-Search-Exact,Professors,profID,2709
+Search-Range,Students,Score,3,4
+Search-Range,Professors,Salary,2709,3000
 Join,Professors,Students
