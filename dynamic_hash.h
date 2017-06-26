@@ -18,6 +18,7 @@ public:
 class Dynamic_Hash {
 private:
 	void Extend_Table(unsigned int Hash_Key, fstream& DB_File);
+	void Extend_Table_prof(unsigned int Hash_Key, fstream& DB_File);
 	fstream Hash_File;
 	int Table_Bit_Num;
 
@@ -28,6 +29,7 @@ public:
 	~Dynamic_Hash();
 	long Get_Hash_Offset(string s_ID);		                         // ID 값을 가지고 와서 해당 Block Offset을 Return.
 	void Block_Full(string s_ID, int Block_Bit_Num, fstream& DB_File);
+	void Block_Full_prof(string s_ID, int Block_Bit_Num, fstream& DB_File);
 	void Print_Hash_Table();
 	void Bin(int x);
 };
