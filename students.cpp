@@ -299,9 +299,10 @@ int main() {
 	
 	ifstream fin;
 	fstream sco;
-	ofstream of;
+	fstream sco2;
+//	ofstream of;
 	fin.open("student_data.csv");
-	of.open("Students_score.idx");
+	//of.open("Students_score.idx");
 	getline(fin, tmp);
 	N = stoi(tmp);
 	N = 100000;
@@ -319,8 +320,8 @@ int main() {
 		
 	}
 	
-	root->Print(of);
 
+	root->Print(sco);
 	delete[] students;
 
 	fin.close();
@@ -339,12 +340,10 @@ int main() {
 		root_P->Insert(professors[i],0);
 	}
 	delete[] professors;
-	root->Print(of);
-	root_P->Print(of);
+	root_P->Print(sco2);
 	fin.close();
 	//studDB.Close();
 	//profDB.Close();
-	of.close();
 	ReadQuery(root, root_P);
 	
 	return 0;

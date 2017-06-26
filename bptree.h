@@ -209,24 +209,7 @@ public:
         }
 
     }
-    void Print(ofstream& of){
-		int s = 0;
-		int i =0;
-        BPNode* tmp = this;
-        while(!tmp->isLeaf()){
-            tmp = tmp->childnode[0];
-        }
-        while(tmp!= NULL){
-			of << "LEAF NODE No." << s+1 << endl;
-            for(i = 0; i<tmp->in; i++){
-				if(tmp->students[i].score>0 && tmp->students[i].score <=4.5)
-					of << tmp->students[i].score << ", " << tmp->students[i].studentID << "," << tmp->BNum[i] <<endl;
-            }
-            tmp = tmp->nextleaf;
-			of << "-----------------------------------------------------------------------" << endl;
-			s++;
-        }
-		/*
+    void Print(fstream& of){
   		int s = 0;
   		int i =0;
           BPNode* tmp = this;
@@ -240,7 +223,7 @@ public:
 			of.write((char*)tmp, sizeof(BPNode));
 			tmp = tmp->nextleaf;
 		}
-		of.close();*/
+		of.close();
 	}
    
 	Students Copy(Students& a){
@@ -487,7 +470,7 @@ public:
 			}
         }
     }
-    void Print(ofstream& of){
+    void Print(fstream& of){
 		int s = 0;
 		int i =0;
         BPNode_P* tmp = this;
@@ -497,49 +480,21 @@ public:
         while(tmp!= NULL){
 			of << "LEAF NODE No." << s+1 << endl;
             for(i = 0; i<tmp->in; i++){
-				if(tmp->professors[i].Salary>0 && tmp->professors[i].Salary < 100000)
-					of << tmp->professors[i].Salary << ", " << tmp->professors[i].profID << "," << tmp->BNum[i] <<endl;
+				of << tmp->professors[i].Salary << ", " << tmp->professors[i].profID << "," << tmp->BNum[i] <<endl;
             }
             tmp = tmp->nextleaf;
 			of << "-----------------------------------------------------------------------" << endl;
 			s++;
         }
-		/*
-  		int s = 0;
-  		int i =0;
-          BPNode_P* tmp = this;
-          while(!tmp->isLeaf()){
-              tmp = tmp->childnode[0];
-          }
-		of.open("Students_score.idx", ios::in | ios::out | ios::binary);
+		of.open("Professor_Saraly.idx", ios::in | ios::out | ios::binary);
 		if(!of)
-			of.open("Students_score.idx", ios::in | ios::out | ios::binary | ios::trunc);
+			of.open("Professors_Saraly.idx", ios::in | ios::out | ios::binary | ios::trunc);
 		while (tmp != NULL) {
 			of.write((char*)tmp, sizeof(BPNode_P));
 			tmp = tmp->nextleaf;
 		}
-		of.close();*/
+		of.close();
 	}
-    void Print(int k){
-		int j =0;
-        BPNode_P* tmp = this;
-        while(!tmp->isLeaf()){
-            tmp = tmp->childnode[0];
-        }
-        int i = 0;
-		for( i =0;i<k;i++){
-			tmp = tmp->nextleaf;
-			if(tmp == NULL){
-				cout << k << "is too big." << endl;
-				break;
-			}
-		}
-		if(tmp!= NULL){
-			for(j =0; j< tmp->in ;j++){
-				cout << tmp->professors[j].Salary << ", " << tmp->professors[j].profID << "," << tmp->BNum[j] <<endl;
-			}
-		}
-    }
 	Professors Copy(Professors& a){
 		Professors b;
 		strcpy(b.name, a.name);
@@ -582,3 +537,5 @@ public:
 		}
 	}
 };
+
+#endif
