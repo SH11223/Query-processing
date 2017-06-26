@@ -113,6 +113,7 @@ void JoinPS(ofstream& fout, int count) {
 }
 
 void ReadQuery(BPNode* stu, BPNode_P* prof, int count) {
+
 	int K;
 	Students student;
 	Professors professor;
@@ -187,6 +188,7 @@ void ReadQuery(BPNode* stu, BPNode_P* prof, int count) {
 				i = pos + 1;
 				cout << tmp.substr(i).c_str() << endl;
 				stu->Search(j, atof(tmp.substr(i).c_str()), fout);
+
 			}
 			else if (!strcmp(tmp.substr(i, pos - i).c_str(), "Professors")) {
 				i = pos + 1;
@@ -244,8 +246,9 @@ int main() {
 	cout << "error" << endl;
 	}
 	else
-	cout << "error" << endl;
 
+		cout << "error" << endl;
+	
 	BPNode* root = new BPNode();
 	ifstream fin1, fin2;
 	fin1.open("sampleData.csv");
@@ -312,6 +315,7 @@ int main() {
 	ofstream of;
 	fin.open("student_data.csv");
 	of.open("Students_score.idx");
+
 	getline(fin, tmp);
 	N = stoi(tmp);
 	while (N > 100000) {
@@ -352,8 +356,8 @@ int main() {
 		studDB1.Insert(student);
 
 		// root->Insert(students[i], i);
-
 	}
+	
 
 	// root->Print(sco);
 
@@ -382,7 +386,7 @@ int main() {
 	profDB.Close();
 	of.close();
 	ReadQuery(root, root_P, count);
-
+  
 	return 0;
 
 
