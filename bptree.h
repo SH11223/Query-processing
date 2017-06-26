@@ -3,7 +3,7 @@
 using namespace std;
 #include "students.h"
 #define IN_NODE_MAX ((BLOCKSIZE - sizeof(Students)) / (sizeof(Students)+sizeof(int)+sizeof(int*)))
-#define IN_NODE_MAX_P ((BLOCKSIZE - 3*sizeof(int*) -2*sizeof(int) -sizeof(bool)) / (sizeof(Professors) + sizeof(int) + sizeof(int*))
+#define IN_NODE_MAX_P ((BLOCKSIZE - 3*sizeof(int*) -2*sizeof(int) -sizeof(bool)) / (sizeof(Professors) + sizeof(int) + sizeof(int*)))
 
 class BPNode{
 private:
@@ -74,7 +74,7 @@ public:
             BPNode* new1 = new BPNode();
             BPNode* new2 = new BPNode();
 			s =0;
-            for(k = this->in/2+1; k<in; k++){
+            for(k = this->in/2; k<in; k++){
 				
                 new2->students[s] = Copy(this->students[k]);
 				
@@ -82,7 +82,7 @@ public:
                 new2->in++;
 				s++;
             }
-            for(j = 0; j< this->in/2+1 ; j++){
+            for(j = 0; j< this->in/2 ; j++){
                 new1->students[j] = Copy(this->students[j]);
 				new1->BNum[j] = this->BNum[j];
                 new1->in++;
@@ -129,7 +129,7 @@ public:
 		}
         else{ //When this node is not a root.
 			s =0;
-            BPNode* new1 = this->Copy();
+            BPNode* new1 = this->Brother();
 			int k;
 			//childtem = new BPNode();
 			//childtem = 
@@ -155,8 +155,8 @@ public:
 			parenttmp->Sort();
 			if(parenttmp->isFull())
 				parenttmp->Split();
-            //insert parent에 scores[in/2]
-            //childnode 정리
+            //insert parent¿¡ scores[in/2]
+            //childnode A¤¸®
 
         }
 
@@ -219,7 +219,8 @@ public:
         while(tmp!= NULL){
 			of << "LEAF NODE No." << s+1 << endl;
             for(i = 0; i<tmp->in; i++){
-				of << tmp->students[i].score << ", " << tmp->students[i].studentID << "," << tmp->BNum[i] <<endl;
+				if(tmp->students[i].score>0 && tmp->students[i].score <=4.5)
+					of << tmp->students[i].score << ", " << tmp->students[i].studentID << "," << tmp->BNum[i] <<endl;
             }
             tmp = tmp->nextleaf;
 			of << "-----------------------------------------------------------------------" << endl;
@@ -241,26 +242,7 @@ public:
 		}
 		of.close();*/
 	}
-    void Print(int k){
-		int j =0;
-        BPNode* tmp = this;
-        while(!tmp->isLeaf()){
-            tmp = tmp->childnode[0];
-        }
-        int i = 0;
-		for( i =0;i<k;i++){
-			tmp = tmp->nextleaf;
-			if(tmp == NULL){
-				cout << k << "is too big." << endl;
-				break;
-			}
-		}
-		if(tmp!= NULL){
-			for(j =0; j< tmp->in ;j++){
-				cout << tmp->students[j].score << ", " << tmp->students[j].studentID << "," << tmp->BNum[j] <<endl;
-			}
-		}
-    }
+   
 	Students Copy(Students& a){
 		Students b;
 		strcpy(b.name, a.name);
@@ -269,23 +251,57 @@ public:
 		b.advisorID = a.advisorID;
 		return b;
 	}
+	
+	void Search(float a, float b, ofstream& of){
+		BPNode *temp;
+		temp = this;
+		int count=0;
+		while(!temp->leaf){
+			temp = temp->childnode[0];
+		}
+		int i = 0;
+		while(true){
+			if(temp->students[temp->in -1].score < a)
+				temp = temp->nextleaf;
+			else 
+			{
+				for(i =0; i<temp->in; i++){
+					if(temp->students[i].score == a | temp->students[i].score > a)
+						break;
+				}
+				break;
+			}
+		}
+		while( temp->students[i].score ==b | temp->students[i].score < b ){
+			if(temp == NULL)
+				break;
+			of << temp->students[i].name << ", " << temp->students[i].studentID << ", " << temp->students[i].score << ", " <<  temp->students[i].advisorID << endl;
+			i++;
+			count++;
+			if(i == temp->in)
+				if(temp->nextleaf == NULL)
+					break;
+				else
+					temp = temp->nextleaf;
+		}
+	}
 };
 
 class BPNode_P{
 private:
-    BPNode* nextleaf;
-    BPNode* childnode[IN_NODE_MAX_P+1];
-	BPNode* parentnode;
+    BPNode_P* nextleaf;
+    BPNode_P* childnode[IN_NODE_MAX_P +1];
+	BPNode_P* parentnode;
     Professors professors[IN_NODE_MAX_P];
 	int BNum[IN_NODE_MAX_P];
     bool leaf;
     int in;
 	char blank[BLOCKSIZE - 3*sizeof(int*) - 2*sizeof(int) - sizeof(bool)- IN_NODE_MAX_P*(sizeof(Professors) + sizeof(int) + sizeof(int*))];
 public:
-    BPNode(){
+    BPNode_P(){
         nextleaf = NULL;
 		parentnode = NULL;
-		for(int i = 0; i < IN_NODE_MAX+1 ; i++){
+		for(int i = 0; i < IN_NODE_MAX_P+1 ; i++){
 			childnode[i] = NULL;
 		}
         leaf = true;
@@ -298,8 +314,8 @@ public:
         return (in == 0);}
     bool isLeaf(){
         return leaf;}
-    BPNode* Brother(){
-        BPNode* b = new BPNode();
+    BPNode_P* Brother(){
+        BPNode_P* b = new BPNode_P();
 		b->parentnode = this->parentnode;
         b->leaf = this->leaf;
         return b;
@@ -307,9 +323,9 @@ public:
     void Sort(){
         Professors temp;
 		int BNtemp;
-		//int a = this->in;
-       // BPNode* childtem = new BPNode();
-        BPNode* childtem;
+		int a = this->in;
+       // BPNode_P* childtem = new BPNode_P();
+        BPNode_P* childtem;
         int i, j;
 		temp = Copy(this->professors[this->in-1]);
 		BNtemp = BNum[a-1];
@@ -336,29 +352,29 @@ public:
 		int k =0;
 		int j =0;
 		int s =0;
-        BPNode* parenttmp;
-        BPNode* childtem;
+        BPNode_P* parenttmp;
+        BPNode_P* childtem;
 		
         if(this->parentnode == NULL && this->isLeaf()){			//When this node is a root.
-            BPNode* new1 = new BPNode();
-            BPNode* new2 = new BPNode();
+            BPNode_P* new1 = new BPNode_P();
+            BPNode_P* new2 = new BPNode_P();
 			s =0;
-            for(k = this->in/2+1; k<in; k++){
+            for(k = (this->in+1)/2; k<in; k++){
 				
-                new2->parentnode[s] = Copy(this->parentnode[k]);
+                new2->professors[s] = Copy(this->professors[k]);
 				
 				new2->BNum[s] = this->BNum[k];
                 new2->in++;
 				s++;
             }
-            for(j = 0; j< this->in/2+1 ; j++){
-                new1->parentnode[j] = Copy(this->parentnode[j]);
+            for(j = 0; j< this->in/2 ; j++){
+                new1->professors[j] = Copy(this->professors[j]);
 				new1->BNum[j] = this->BNum[j];
                 new1->in++;
             }
 			
             new1->nextleaf = new2;
-            this->parentnode[0] = Copy(new1->parentnode[new1->in-1]);
+            this->professors[0] = Copy(new1->professors[new1->in-1]);
 			this->BNum[0] = new1->BNum[0];
             this->childnode[0] = new1;
             this->childnode[1] = new2;
@@ -368,12 +384,12 @@ public:
             new2->parentnode = this;
         }
 		else if (this->parentnode == NULL){
-            BPNode* new1 = new BPNode();
-            BPNode* new2 = new BPNode();
+            BPNode_P* new1 = new BPNode_P();
+            BPNode_P* new2 = new BPNode_P();
 			s =0;
             for(k = this->in/2+1; k<this->in; k++){
 				
-                new2->parentnode[s] = Copy(this->parentnode[k]);
+                new2->professors[s] = Copy(this->professors[k]);
 				
 				new2->childnode[s+1] = this->childnode[k];
 				new2->BNum[s] = this->BNum[k];
@@ -381,12 +397,12 @@ public:
 				s++;
             }
             for(j = 0; j< this->in/2+1 ; j++){
-                new1->parentnode[j] = Copy(this->parentnode[j]);
+                new1->professors[j] = Copy(this->professors[j]);
 				new1->BNum[j] = this->BNum[j];
 				new1->childnode[j] = this->childnode[j];
                 new1->in++;
             }
-            this->parentnode[0] = Copy(new1->parentnode[new1->in-1]);
+            this->professors[0] = Copy(new1->professors[new1->in-1]);
 			this->BNum[0] = new1->BNum[new1->in-1];
             this->childnode[0] = new1;
             this->childnode[1] = new2;
@@ -398,18 +414,18 @@ public:
 		}
         else{ //When this node is not a root.
 			s =0;
-            BPNode* new1 = this->Copy();
+            BPNode_P* new1 = this->Brother();
 			int k;
-			//childtem = new BPNode();
+			//childtem = new BPNode_P();
 			//childtem = 
             for(k = this->in/2+1; k<this->in+1; k++){
-                new1->parentnode[s] = Copy(this->parentnode[k]);
+                new1->professors[s] = Copy(this->professors[k]);
 				new1->BNum[s] = this->BNum[k];
                 new1->in++;
 				new1->childnode[s+1]=this->childnode[k];
 				s++;
 				
-                //this->parentnode[k] =0;
+                //this->professors[k] =0;
             }
             this->in = IN_NODE_MAX/2+1;
             if(new1->isLeaf()){
@@ -417,15 +433,15 @@ public:
                 this->nextleaf = new1;
             }
 			parenttmp = this->parentnode;
-			parenttmp->parentnode[parenttmp->in] = Copy(this->parentnode[this->in-1]);
+			parenttmp->professors[parenttmp->in] = Copy(this->professors[this->in-1]);
 			parenttmp->BNum[parenttmp->in] = this->BNum[this->in-1];
 			parenttmp->in++;
 			parenttmp->childnode[parenttmp->in] = new1;
 			parenttmp->Sort();
 			if(parenttmp->isFull())
 				parenttmp->Split();
-            //insert parent에 scores[in/2]
-            //childnode 정리
+            //insert parent¿¡ scores[in/2]
+            //childnode A¤¸®
 
         }
 
@@ -434,7 +450,7 @@ public:
     void Insert(Professors prof, int Bnum){ //insert 
 		int t= 0;
         int i = 0;
-        BPNode* tmp = this;
+        BPNode_P* tmp = this;
         if(tmp->in == 0){
 			tmp->professors[0] = Copy(prof);
 			tmp->BNum[0] = Bnum;
@@ -474,14 +490,15 @@ public:
     void Print(ofstream& of){
 		int s = 0;
 		int i =0;
-        BPNode* tmp = this;
+        BPNode_P* tmp = this;
         while(!tmp->isLeaf()){
             tmp = tmp->childnode[0];
         }
         while(tmp!= NULL){
 			of << "LEAF NODE No." << s+1 << endl;
             for(i = 0; i<tmp->in; i++){
-				of << tmp->parentnode[i].Salary << ", " << tmp->parentnode[i].prodID << "," << tmp->BNum[i] <<endl;
+				if(tmp->professors[i].Salary>0 && tmp->professors[i].Salary < 100000)
+					of << tmp->professors[i].Salary << ", " << tmp->professors[i].profID << "," << tmp->BNum[i] <<endl;
             }
             tmp = tmp->nextleaf;
 			of << "-----------------------------------------------------------------------" << endl;
@@ -490,7 +507,7 @@ public:
 		/*
   		int s = 0;
   		int i =0;
-          BPNode* tmp = this;
+          BPNode_P* tmp = this;
           while(!tmp->isLeaf()){
               tmp = tmp->childnode[0];
           }
@@ -498,14 +515,14 @@ public:
 		if(!of)
 			of.open("Students_score.idx", ios::in | ios::out | ios::binary | ios::trunc);
 		while (tmp != NULL) {
-			of.write((char*)tmp, sizeof(BPNode));
+			of.write((char*)tmp, sizeof(BPNode_P));
 			tmp = tmp->nextleaf;
 		}
 		of.close();*/
 	}
     void Print(int k){
 		int j =0;
-        BPNode* tmp = this;
+        BPNode_P* tmp = this;
         while(!tmp->isLeaf()){
             tmp = tmp->childnode[0];
         }
@@ -519,7 +536,7 @@ public:
 		}
 		if(tmp!= NULL){
 			for(j =0; j< tmp->in ;j++){
-				cout << tmp->parentnode[j].Salary << ", " << tmp->parentnode[j].prodID << "," << tmp->BNum[j] <<endl;
+				cout << tmp->professors[j].Salary << ", " << tmp->professors[j].profID << "," << tmp->BNum[j] <<endl;
 			}
 		}
     }
@@ -530,6 +547,38 @@ public:
 		b.Salary = a.Salary;
 		return b;
 	}
+	
+	void Search(int a, int b, ofstream& of){
+		BPNode_P *temp;
+		temp = this;
+		int count=0;
+		while(!temp->leaf){
+			temp = temp->childnode[0];
+		}
+		int i = 0;
+		while(true){
+			if(temp->professors[temp->in -1].Salary < a)
+				temp = temp->nextleaf;
+			else 
+			{
+				for(i =0; i<temp->in; i++){
+					if(temp->professors[i].Salary == a | temp->professors[i].Salary > a)
+						break;
+				}
+				break;
+			}
+		}
+		while( temp->professors[i].Salary ==b | temp->professors[i].Salary < b ){
+			if(temp == NULL)
+				break;
+			of << temp->professors[i].name << ", " << temp->professors[i].profID << ", " << temp->professors[i].Salary << endl;
+			i++;
+			count++;
+			if(i == temp->in)
+				if(temp->nextleaf == NULL)
+					break;
+				else
+					temp = temp->nextleaf;
+		}
+	}
 };
-
-#endif // BPTREE_H_INCLUDED
