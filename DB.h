@@ -16,7 +16,7 @@ public:
 	Block_prof DB_Buffer_prof;
 	friend class Dynamic_Hash;
 	Dynamic_Hash* H;
-	void Open();
+	void Open(string filename);
 	void Open_prof();
 	void Close();
 	bool Insert(Students student);
